@@ -1,0 +1,136 @@
+@using ELearningPlatform.Models.ViewModel
+@model PaymentViewModel
+@{
+    ViewData["Title"] = "Payment";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-purple text-white">
+                    <h1 class="h3 mb-0">Payment</h1>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h2 class="h5">Order Summary</h2>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <p class="mb-0 fw-bold">@Model.CourseName</p>
+                                <p class="text-muted mb-0">Course Access</p>
+                            </div>
+                            <p class="mb-0 fw-bold">$@Model.Amount.ToString("0.00")</p>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="mb-0 fw-bold">Total</p>
+                            <p class="mb-0 fw-bold">$@Model.Amount.ToString("0.00")</p>
+                        </div>
+                    </div>
+                    
+                    <form asp-action="Process" method="post">
+                        <input type="hidden" asp-for="EnrollmentId" />
+                        <input type="hidden" asp-for="CourseName" />
+                        <input type="hidden" asp-for="Amount" />
+                        
+                        <div class="mb-4">
+                            <h2 class="h5">Payment Method</h2>
+                            <div class="form-check form-check-inline mt-2">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="creditCard" value="CreditCard" checked>
+                                <label class="form-check-label" for="creditCard">Credit Card</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="paypal" value="PayPal">
+                                <label class="form-check-label" for="paypal">PayPal</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="applePay" value="ApplePay">
+                                <label class="form-check-label" for="applePay">Apple Pay</label>
+                            </div>
+                        </div>
+                        
+                        <div id="creditCardForm">
+                            <div class="mb-3">
+                                <label asp-for="CardHolderName" class="form-label"></label>
+                                <input asp-for="CardHolderName" class="form-control" placeholder="Enter cardholder name">
+                                <span asp-validation-for="CardHolderName" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="CardNumber" class="form-label"></label>
+                                <input asp-for="CardNumber" class="form-control" placeholder="Enter card number">
+                                <span asp-validation-for="CardNumber" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label asp-for="ExpirationMonth" class="form-label"></label>
+                                    <select asp-for="ExpirationMonth" class="form-select">
+                                        @for (int i = 1; i <= 12; i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="ExpirationMonth" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label asp-for="ExpirationYear" class="form-label"></label>
+                                    <select asp-for="ExpirationYear" class="form-select">
+                                        @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 10; i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="ExpirationYear" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label asp-for="CVV" class="form-label"></label>
+                                    <input asp-for="CVV" class="form-control" placeholder="Enter CVV">
+                                    <span asp-validation-for="CVV" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-controller="MyLearning" asp-action="Index" class="btn btn-outline-purple">
+                                <i class="bi bi-arrow-left"></i> Back to My Learning
+                            </a>
+                            <button type="submit" class="btn btn-purple">
+                                Complete Payment <i class="bi bi-check2-circle"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const creditCardRadio = document.getElementById('creditCard');
+            const paypalRadio = document.getElementById('paypal');
+            const applePayRadio = document.getElementById('applePay');
+            const creditCardForm = document.getElementById('creditCardForm');
+            
+            function togglePaymentForm() {
+                if (creditCardRadio.checked) {
+                    creditCardForm.style.display = 'block';
+                } else {
+                    creditCardForm.style.display = 'none';
+                }
+            }
+            
+            creditCardRadio.addEventListener('change', togglePaymentForm);
+            paypalRadio.addEventListener('change', togglePaymentForm);
+            applePayRadio.addEventListener('change', togglePaymentForm);
+            
+            togglePaymentForm();
+        });
+    </script>
+}
+

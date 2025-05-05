@@ -1,0 +1,277 @@
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin-bottom: 60px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 76px;
+}
+
+/* Navbar Styling */
+.navbar {
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #5a2fb0;
+}
+
+.nav-link {
+    font-weight: 500;
+}
+
+/* Hero Section */
+.hero-section {
+    background-color: #5a2fb0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+/* Feature Cards */
+.feature-card {
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+}
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+.icon-wrapper {
+    height: 80px;
+    width: 80px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(90, 47, 176, 0.1);
+}
+
+/* Course Cards */
+.course-card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-card .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+.course-price {
+    color: #5a2fb0;
+    font-size: 1.25rem;
+}
+
+.course-duration {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.instructor {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Section Styling */
+.section-title {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.section-description {
+    color: #6c757d;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Footer */
+.footer {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+}
+
+.social-icons a {
+    font-size: 1.5rem;
+    color: #5a2fb0;
+    transition: color 0.3s ease;
+}
+
+    .social-icons a:hover {
+        color: #4a2690;
+    }
+
+/* Buttons */
+.btn-primary {
+    background-color: #5a2fb0;
+    border-color: #5a2fb0;
+}
+
+    .btn-primary:hover {
+        background-color: #4a2690;
+        border-color: #4a2690;
+    }
+
+.btn-outline-primary {
+    color: #5a2fb0;
+    border-color: #5a2fb0;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #5a2fb0;
+        border-color: #5a2fb0;
+    }
+
+/* Custom Button Color */
+.btn-purple {
+    background-color: #8540e8;
+    border-color: #8540e8;
+    color: white;
+}
+
+    .btn-purple:hover {
+        background-color: #7030d0;
+        border-color: #7030d0;
+        color: white;
+    }
+
+/* Purple Button Styles */
+.btn-outline-purple {
+    color: #8540e8;
+    border-color: #8540e8;
+}
+
+    .btn-outline-purple:hover {
+        background-color: #8540e8;
+        border-color: #8540e8;
+        color: white;
+    }
+
+/* Lesson List Styling */
+.Lesson-list .list-group-item.active {
+    background-color: #8540e8;
+    border-color: #8540e8;
+}
+
+.Lesson-list .list-group-item:hover:not(.active) {
+    background-color: rgba(133, 64, 232, 0.1);
+}
+
+/* Quiz Styling */
+.quiz-question .feedback {
+    padding: 8px;
+    border-radius: 4px;
+}
+
+    .quiz-question .feedback.text-success {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+
+    .quiz-question .feedback.text-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+/* Form Styling */
+.form-control:focus {
+    border-color: #8540e8;
+    box-shadow: 0 0 0 0.25rem rgba(133, 64, 232, 0.25);
+}
+
+/* Card Styling */
+.card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.bg-purple {
+    background-color: #8540e8;
+}
+
+/* Certificate Styling */
+.text-purple {
+    color: #8540e8;
+}
+
+.certificate-container {
+    border: 15px solid #8540e8;
+    border-radius: 10px;
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.certificate-name {
+    font-family: "Brush Script MT", cursive;
+}
+
+@media print {
+    .btn-group,
+    .card-header,
+    .navbar,
+    footer,
+    .alert {
+        display: none !important;
+    }
+
+    .certificate-container {
+        border: 5px solid #8540e8 !important;
+        box-shadow: none !important;
+    }
+
+    body {
+        padding-top: 0 !important;
+    }
+}
+
+/* Reviews Section Styling */
+.review-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .review-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+
+.review-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.review-comment {
+    font-style: italic;
+    position: relative;
+    padding-left: 20px;
+    border-left: 3px solid #8540e8;
+}
+
+.user-reviews-section {
+    background-color: #f9f9f9;
+    border-radius: 0.5rem;
+}

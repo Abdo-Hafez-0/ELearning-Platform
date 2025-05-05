@@ -1,0 +1,72 @@
+@using ELearningPlatform.Models.ViewModel
+@model QuizResultViewModel
+@{
+    ViewData["Title"] = "Quiz Results";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-purple text-white">
+                    <h1 class="h3 mb-0">Quiz Results</h1>
+                </div>
+                <div class="card-body text-center py-5">
+                    @if (Model.Passed)
+                    {
+                        <div class="mb-4">
+                            <div class="display-1 text-success mb-3">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <h2 class="h4">Congratulations!</h2>
+                            <p class="lead">You passed the quiz with @Model.Percentage%</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-4">
+                            <div class="display-1 text-danger mb-3">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </div>
+                            <h2 class="h4">Keep Learning!</h2>
+                            <p class="lead">You scored @Model.Percentage%. You need 70% to pass.</p>
+                        </div>
+                    }
+                    
+                    <div class="mb-4">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar @(Model.Passed ? "bg-success" : "bg-danger")" role="progressbar" 
+                                 style="width: @Model.Percentage%;" aria-valuenow="@Model.Percentage" aria-valuemin="0" aria-valuemax="100">
+                                @Model.Percentage%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="mb-1">Correct Answers: <strong>@Model.CorrectAnswers</strong></p>
+                        <p class="mb-0">Total Questions: <strong>@Model.TotalQuestions</strong></p>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <a asp-action="Details" asp-route-id="@ViewData["CoursId"]" asp-route-LessonId="@Model.LessonId" class="btn btn-outline-purple">
+                            <i class="bi bi-arrow-left"></i> Back to Lesson
+                        </a>
+                        @if (!Model.Passed)
+                        {
+                            <a asp-action="Quiz" asp-route-id="@ViewData["CoursId"]" asp-route-LessonId="@Model.LessonId" class="btn btn-purple">
+                                <i class="bi bi-arrow-repeat"></i> Try Again
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Details" asp-route-id="@ViewData["CoursId"]" asp-route-LessonId="@(Model.LessonId + 1)" class="btn btn-purple">
+                                Next Lesson <i class="bi bi-arrow-right"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

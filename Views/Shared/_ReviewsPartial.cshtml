@@ -1,0 +1,40 @@
+@using ELearningPlatform.Models.ViewModel
+@model List<ReviewViewModel>
+
+<div class="reviews-carousel">
+    <div class="row">
+        @foreach (var review in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="review-card h-100">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="@(string.IsNullOrEmpty(review.UserProfileImage) ? "/images/profile-placeholder.jpg" : review.UserProfileImage)" 
+                                     alt="@review.UserName" class="review-avatar me-3">
+                                <div>
+                                    <h5 class="mb-0">@review.UserName</h5>
+                                    <p class="text-muted small mb-0">@review.CourseName</p>
+                                </div>
+                            </div>
+                            <div class="mb-2 text-warning">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= review.Rating)
+                                    {
+                                        <i class="bi bi-star-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star"></i>
+                                    }
+                                }
+                            </div>
+                            <p class="review-comment">@review.Comment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

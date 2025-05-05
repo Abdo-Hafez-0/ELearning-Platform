@@ -1,0 +1,59 @@
+@using ELearningPlatform.Models.ViewModel
+@model CertificationViewModel
+@{
+    ViewData["Title"] = "Certificate of Completion";
+    Layout = "_PrintLayout";
+}
+
+<div class="certificate-container">
+    <!-- Certificate Header -->
+    <div class="text-center mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <img src="/images/logo.svg" alt="E-Learning Platform Logo" height="60">
+            </div>
+            <div class="text-end">
+                <h6 class="text-muted mb-0">Certificate No.</h6>
+                <p class="mb-0">@Model.CertificateNumber</p>
+            </div>
+        </div>
+        <h1 class="display-4 fw-bold text-purple mb-2">Certificate of Completion</h1>
+        <p class="lead">This certifies that</p>
+    </div>
+
+    <!-- Certificate Body -->
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-4 certificate-name">@Model.UserFullName</h2>
+        <p class="lead mb-4">has successfully completed the course</p>
+        <h3 class="h2 fw-bold text-purple mb-4">@Model.CourseName</h3>
+        <p class="mb-1">with a total duration of @Model.DurationInHours hours</p>
+        <p class="mb-4">on @Model.CertificationDate.ToString("MMMM d, yyyy")</p>
+    </div>
+
+    <!-- Certificate Footer -->
+    <div class="row mt-5 pt-5">
+        <div class="col-md-6 text-center">
+            <div class="border-top border-dark pt-2 mx-auto" style="width: 200px;">
+                <p class="mb-0">E-Learning Platform</p>
+                <p class="text-muted">Issuing Authority</p>
+            </div>
+        </div>
+        <div class="col-md-6 text-center">
+            <div class="border-top border-dark pt-2 mx-auto" style="width: 200px;">
+                <p class="mb-0">@Model.InstructorName</p>
+                <p class="text-muted">Course Instructor</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <p class="text-muted small">Verify this certificate at www.elearningplatform.com/verify</p>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        window.print();
+    }
+</script>
+

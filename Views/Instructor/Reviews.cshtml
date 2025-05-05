@@ -1,0 +1,183 @@
+@model IEnumerable<ELearningPlatform.Models.Review>
+
+@{
+    ViewData["Title"] = "Reviews";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5 fw-bold">Reviews</h1>
+            <p class="text-muted">View and respond to student feedback for your courses.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <partial name="_InstructorNavPartial" />
+            
+            <div class="card mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Rating Summary</h5>
+                </div>
+                <div class="card-body">
+                    @{
+                        var averageRating = Model.Any() ? Model.Average(r => r.Rating) : 0;
+                        var fiveStars = Model.Count(r => r.Rating == 5);
+                        var fourStars = Model.Count(r => r.Rating == 4);
+                        var threeStars = Model.Count(r => r.Rating == 3);
+                        var twoStars = Model.Count(r => r.Rating == 2);
+                        var oneStar = Model.Count(r => r.Rating == 1);
+                        var totalReviews = Model.Count();
+                    }
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <h2 class="mb-0 me-2">@averageRating.ToString("0.0")</h2>
+                        <div>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= Math.Round(averageRating))
+                                {
+                                    <i class="fas fa-star text-warning"></i>
+                                }
+                                else
+                                {
+                                    <i class="far fa-star text-warning"></i>
+                                }
+                            }
+                            <div class="text-muted small">@totalReviews reviews</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="d-flex align-items-center mb-1">
+                            <div class="me-2" style="width: 60px;">5 stars</div>
+                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: @(totalReviews > 0 ? (fiveStars * 100.0 / totalReviews) : 0)%;" aria-valuenow="@(totalReviews > 0 ? (fiveStars * 100.0 / totalReviews) : 0)" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div style="width: 30px;">@fiveStars</div>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <div class="me-2" style="width: 60px;">4 stars</div>
+                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: @(totalReviews > 0 ? (fourStars * 100.0 / totalReviews) : 0)%;" aria-valuenow="@(totalReviews > 0 ? (fourStars * 100.0 / totalReviews) : 0)" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div style="width: 30px;">@fourStars</div>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <div class="me-2" style="width: 60px;">3 stars</div>
+                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: @(totalReviews > 0 ? (threeStars * 100.0 / totalReviews) : 0)%;" aria-valuenow="@(totalReviews > 0 ? (threeStars * 100.0 / totalReviews) : 0)" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div style="width: 30px;">@threeStars</div>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <div class="me-2" style="width: 60px;">2 stars</div>
+                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: @(totalReviews > 0 ? (twoStars * 100.0 / totalReviews) : 0)%;" aria-valuenow="@(totalReviews > 0 ? (twoStars * 100.0 / totalReviews) : 0)" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div style="width: 30px;">@twoStars</div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="me-2" style="width: 60px;">1 star</div>
+                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: @(totalReviews > 0 ? (oneStar * 100.0 / totalReviews) : 0)%;" aria-valuenow="@(totalReviews > 0 ? (oneStar * 100.0 / totalReviews) : 0)" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div style="width: 30px;">@oneStar</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0">All Reviews (@Model.Count())</h5>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search reviews..." id="reviewSearch">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-4">
+                            <p class="mb-0">No reviews available yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush" id="reviewsList">
+                            @foreach (var review in Model)
+                            {
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(review.User.ProfileImageUrl))
+                                            {
+                                                <img src="/images/@review.User.ProfileImageUrl" alt="@review.User.FirstName" class="me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                                            }
+                                            else
+                                            {
+                                                <div class="me-2 bg-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 50%;">
+                                                    <i class="fas fa-user text-secondary"></i>
+                                                </div>
+                                            }
+                                            <div>
+                                                <div class="fw-bold">@review.User.FirstName @review.User.LastName</div>
+                                                <div class="text-muted small">@review.CreatedAt.ToString("MMM dd, yyyy")</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-primary">@review.Course.CourseName</span>
+                                            <div class="mt-1">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    if (i <= review.Rating)
+                                                    {
+                                                        <i class="bi bi-star-fill text-yellow"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-star text-yellow"></i>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-2">@review.Comment</p>
+                                    
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#reviewSearch").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#reviewsList .list-group-item").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}

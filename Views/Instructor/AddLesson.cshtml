@@ -1,0 +1,110 @@
+@model ELearningPlatform.Models.LessonViewModel
+
+@{
+    ViewData["Title"] = "Add Lesson";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Courses">My Courses</a></li>
+            <li class="breadcrumb-item"><a asp-action="CourseContent" asp-route-id="@ViewBag.CourseID">@ViewBag.CourseName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add Lesson</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h1 class="h3 mb-0">Add New Lesson</h1>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddLesson" asp-route-id="@ViewBag.CourseID" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Lesson Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="VideoUrl" class="form-label">Video URL</label>
+                                <input asp-for="VideoUrl" class="form-control" placeholder="https://..." />
+                                <span asp-validation-for="VideoUrl" class="text-danger"></span>
+                                <small class="form-text text-muted">Enter YouTube, Vimeo, or other video platform URL</small>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="DurationInMinutes" class="form-label">Duration (minutes)</label>
+                                <input asp-for="DurationInMinutes" class="form-control" type="number" min="1" max="300" />
+                                <span asp-validation-for="DurationInMinutes" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="Order" class="form-label">Order</label>
+                                <input asp-for="Order" class="form-control" type="number" min="1" />
+                                <span asp-validation-for="Order" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div id="quizSection" style="display: block;">
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Quiz Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label asp-for="Quiz.Title" class="form-label">Quiz Title</label>
+                                        <input asp-for="Quiz.Title" class="form-control" />
+                                        <span asp-validation-for="Quiz.Title" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Quiz.Question" class="form-label">Question</label>
+                                        <textarea asp-for="Quiz.Question" class="form-control" rows="2"></textarea>
+                                        <span asp-validation-for="Quiz.Question" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Options</label>
+                                        <p class="text-muted small">Select the correct answer by clicking the radio button.</p>
+
+                                        @for (int i = 0; i < 4; i++)
+                                        {
+                                            <div class="input-group mb-2">
+                                                <div class="input-group-text">
+                                                    <input type="radio" name="Quiz.CorrectOptionIndex" value="@i" 
+                                                           @(i == 0 ? "checked" : "") class="form-check-input mt-0" />
+                                                </div>
+                                                <input asp-for="Quiz.Options[i].OptionText" class="form-control" placeholder="Option @(i + 1)" />
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="CourseContent" asp-route-id="@ViewBag.CourseID" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Lesson</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

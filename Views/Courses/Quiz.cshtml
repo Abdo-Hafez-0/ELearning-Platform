@@ -1,0 +1,70 @@
+@model ELearningPlatform.Models.Quiz
+@{
+    ViewData["Title"] = Model.Title;
+    var course = ViewBag.Course as ELearningPlatform.Models.Course;
+    var Lesson = ViewBag.Lesson as ELearningPlatform.Models.Lessons;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Courses</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Details" asp-route-id="@course.CourseID">@course.CourseName</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Quiz</li>
+                </ol>
+            </nav>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-purple text-white">
+                    <h1 class="h3 mb-0">@Model.Title</h1>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h2 class="h5">Lesson: @Lesson.Title</h2>
+                        <p class="text-muted mb-0">Test your knowledge from this Lesson with the following questions.</p>
+                    </div>
+                    
+                    <form asp-action="SubmitQuiz" method="post">
+                        <input type="hidden" name="quizId" value="@Model.Id" />
+                        <input type="hidden" name="courseId" value="@course.CourseID" />
+                        <input type="hidden" name="LessonId" value="@Lesson.Id" />
+                        
+                        @for (int i = 0; i < Model.Questions.Count; i++)
+                        {
+                            var question = Model.Questions[i];
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h3 class="h6 mb-0">Question @(i + 1): @question.Question</h3>
+                                </div>
+                                <div class="card-body">
+                                    @foreach (var option in question.Options)
+                                    {
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio" name="answers[@question.Id]" id="option_@option.Id" value="@option.Id" required>
+                                            <label class="form-check-label" for="option_@option.Id">
+                                                @option.Text
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Details" asp-route-id="@course.CourseID" asp-route-LessonId="@Lesson.Id" class="btn btn-outline-"  asp-route-id="@course.CourseID" asp-route-LessonId="@Lesson.Id" class="btn btn-outline-purple">
+                                <i class="bi bi-arrow-left"></i> Back to Lesson
+                            </a>
+                            <button type="submit" class="btn btn-purple">
+                                Submit Answers <i class="bi bi-check2-circle"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

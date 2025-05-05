@@ -1,0 +1,182 @@
+@{
+	ViewData["Title"] = "Admin Dashboard";
+	Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h1 class="h2">Dashboard</h1>
+		<div>
+			<span class="text-muted">Welcome, @Context.Session.GetString("AdminUsername")</span>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6 col-lg-3 mb-4">
+			<div class="card bg-primary text-white h-100">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h6 class="text-uppercase mb-0">Total Courses</h6>
+							<h2 class="mt-2 mb-0">@ViewBag.TotalCourses</h2>
+						</div>
+						<div>
+							<i class="bi bi-book fs-1"></i>
+						</div>
+					</div>
+				</div>
+				<div class="card-footer d-flex align-items-center justify-content-between">
+					<a asp-action="Courses" class="text-white text-decoration-none">View Details</a>
+					<i class="bi bi-arrow-right text-white"></i>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6 col-lg-3 mb-4">
+			<div class="card bg-success text-white h-100">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h6 class="text-uppercase mb-0">Total Students</h6>
+							<h2 class="mt-2 mb-0">@ViewBag.TotalStudents</h2>
+						</div>
+						<div>
+							<i class="bi bi-people fs-1"></i>
+						</div>
+					</div>
+				</div>
+				<div class="card-footer d-flex align-items-center justify-content-between">
+					<a asp-action="Students" class="text-white text-decoration-none">View Details</a>
+					<i class="bi bi-arrow-right text-white"></i>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6 col-lg-3 mb-4">
+			<div class="card bg-warning text-dark h-100">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h6 class="text-uppercase mb-0">Total Enrollments</h6>
+							<h2 class="mt-2 mb-0">@ViewBag.TotalEnrollments</h2>
+						</div>
+						<div>
+							<i class="bi bi-person-check fs-1"></i>
+						</div>
+					</div>
+				</div>
+				<div class="card-footer d-flex align-items-center justify-content-between">
+					<span class="text-dark text-decoration-none">Active Enrollments</span>
+					<i class="bi bi-arrow-right text-dark"></i>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6 col-lg-3 mb-4">
+			<div class="card bg-info text-white h-100">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h6 class="text-uppercase mb-0">Total Certifications</h6>
+							<h2 class="mt-2 mb-0">@ViewBag.TotalCertifications</h2>
+						</div>
+						<div>
+							<i class="bi bi-award fs-1"></i>
+						</div>
+					</div>
+				</div>
+				<div class="card-footer d-flex align-items-center justify-content-between">
+					<span class="text-white text-decoration-none">Issued Certificates</span>
+					<i class="bi bi-arrow-right text-white"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-8 mb-4">
+			<div class="card shadow-sm">
+				<div class="card-header bg-white">
+					<h5 class="mb-0">Recent Enrollments</h5>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Student</th>
+									<th>Course</th>
+									<th>Date</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (ViewBag.RecentEnrollments != null)
+								{
+									@foreach (var enrollment in ViewBag.RecentEnrollments)
+									{
+										<tr>
+											<td>@enrollment.User.FirstName @enrollment.User.LastName</td>
+											<td>@enrollment.Course.CourseName</td>
+											<td>@enrollment.EnrollmentDate.ToString("MMM d, yyyy")</td>
+											<td>
+												@if (enrollment.Status == ELearningPlatform.Models.EnrollmentStatus.Completed)
+												{
+													<span class="badge bg-success">Completed</span>
+												}
+												else if (enrollment.Status == ELearningPlatform.Models.EnrollmentStatus.Active)
+												{
+													<span class="badge bg-primary">Active</span>
+												}
+												else
+												{
+													<span class="badge bg-secondary">Dropped</span>
+												}
+											</td>
+										</tr>
+									}
+								}
+								else
+								{
+									<tr>
+										<td colspan="4" class="text-center">No recent enrollments</td>
+									</tr>
+								}
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-4 mb-4">
+			<div class="card shadow-sm">
+				<div class="card-header bg-white">
+					<h5 class="mb-0">Popular Courses</h5>
+				</div>
+				<div class="card-body">
+					<ul class="list-group list-group-flush">
+						@if (ViewBag.PopularCourses != null)
+						{
+							@foreach (var course in ViewBag.PopularCourses)
+							{
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									<div>
+										<h6 class="mb-0">@course.CourseName</h6>
+										<small class="text-muted">@course.Instructor.FirstName @course.Instructor.LastName</small>
+									</div>
+									<span class="badge bg-primary rounded-pill">@course.Enrollments.Count</span>
+								</li>
+							}
+						}
+						else
+						{
+							<li class="list-group-item">No courses available</li>
+						}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

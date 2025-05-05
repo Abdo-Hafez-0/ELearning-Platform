@@ -1,0 +1,79 @@
+@model IEnumerable<ELearningPlatform.Models.Review>
+@{
+    ViewData["Title"] = "My Reviews";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="mb-0">My Reviews</h1>
+            <p class="text-muted">Manage your course reviews and ratings</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-star display-1 text-muted mb-3"></i>
+                <h3>No reviews yet</h3>
+                <p class="text-muted mb-4">You haven't reviewed any courses yet.</p>
+                <a asp-controller="MyLearning" asp-action="Index" class="btn btn-purple">Go to My Learning</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var review in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">@review.Course.CourseName</h5>
+                                <div class="text-warning">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= review.Rating)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-2">
+                                <small>Reviewed on @review.CreatedAt.ToString("MMMM d, yyyy")</small>
+                            </p>
+                            <p class="mb-0">@review.Comment</p>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <div class="d-flex justify-content-between">
+                                <a asp-controller="Reviews" asp-action="Rate" asp-route-id="@review.CourseID" class="btn btn-outline-purple btn-sm">
+                                    <i class="bi bi-pencil me-2"></i> Edit
+                                </a>
+                                <a asp-controller="Reviews" asp-action="Delete" asp-route-id="@review.ReviewID" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash me-2"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

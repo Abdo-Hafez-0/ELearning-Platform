@@ -1,0 +1,154 @@
+@using ELearningPlatform.Models.ViewModel
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="@(string.IsNullOrEmpty(Model.ProfileImageUrl) ? "/images/profile-placeholder.jpg" : "/images/"+Model.ProfileImageUrl)" 
+                             alt="@Model.FirstName @Model.LastName" class="rounded-circle img-thumbnail" 
+                             style="width: 120px; height: 120px; object-fit: cover;" id="profile-image-preview">
+                    </div>
+                    <h5 class="card-title mb-1">@Model.FirstName @Model.LastName</h5>
+                    <p class="text-muted mb-3">@Model.Email</p>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a asp-controller="Account" asp-action="Dashboard" class="list-group-item list-group-item-action">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                    <a asp-controller="MyLearning" asp-action="Index" class="list-group-item list-group-item-action">
+                        <i class="bi bi-collection-play me-2"></i> My Learning
+                    </a>
+                    <a asp-controller="Account" asp-action="Certificates" class="list-group-item list-group-item-action">
+                        <i class="bi bi-award me-2"></i> Certificates
+                    </a>
+                    <a asp-controller="Reviews" asp-action="MyReviews" class="list-group-item list-group-item-action">
+                        <i class="bi bi-star me-2"></i> My Reviews
+                    </a>
+                    <a asp-controller="Account" asp-action="Profile" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-person me-2"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Edit Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Profile" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-3">Profile Picture</h6>
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <img src="@(string.IsNullOrEmpty(Model.ProfileImageUrl) ? "/images/profile-placeholder.jpg" : "/images/"+Model.ProfileImageUrl)"
+                                         alt="Profile Picture" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
+                                </div>
+                                <div>
+                                    <input type="file" class="form-control" id="profile-image" name="ProfileImage" accept="image/*">
+                                    <input type="hidden" asp-for="ProfileImageUrl">
+                                    <small class="form-text text-muted">Upload a new profile picture (JPG, PNG, max 5MB)</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h6 class="text-muted mb-3">Personal Information</h6>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="FirstName" class="form-label">First Name</label>
+                                    <input asp-for="FirstName" class="form-control" placeholder="Enter your first name">
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="LastName" class="form-label">Last Name</label>
+                                    <input asp-for="LastName" class="form-control" placeholder="Enter your last name">
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <input asp-for="Email" class="form-control" placeholder="Enter your email address" readonly>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="Enter your phone number">
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label asp-for="BirthDate" class="form-label">Birth Date</label>
+                            <input asp-for="BirthDate" class="form-control" type="date" readonly>
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
+                        </div>
+
+                        @* <div class="form-group mb-3"> *@
+                        @*     <label asp-for="Password" class="form-label"></label> *@
+                        @*     <input asp-for="Password" class="form-control" placeholder="Create a password" /> *@
+                        @*     <div class="form-text">Password must be at least 6 characters long.</div> *@
+                        @*     <span asp-validation-for="Password" class="text-danger"></span> *@
+                        @* </div> *@
+
+                        @* <div class="form-group mb-4"> *@
+                        @*     <label asp-for="ConfirmPassword" class="form-label"></label> *@
+                        @*     <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm your password" /> *@
+                        @*     <span asp-validation-for="ConfirmPassword" class="text-danger"></span> *@
+                        @* </div> *@
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Dashboard" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-purple">
+                                <i class="bi bi-check2 me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Preview profile image before upload
+        document.getElementById('profile-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('profile-image-preview').src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}
+

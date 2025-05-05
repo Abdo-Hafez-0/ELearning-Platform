@@ -1,0 +1,187 @@
+@using ELearningPlatform.Models.ViewModel
+@model RateViewModel
+@{
+    ViewData["Title"] = Model.IsEdit ? "Edit Review" : "Rate Course";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="MyLearning" asp-action="Index">My Learning</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@(Model.IsEdit ? "Edit Review" : "Rate Course")</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-purple text-white">
+                    <h1 class="h4 mb-0">@(Model.IsEdit ? "Edit Your Review" : "Rate This Course")</h1>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <img src="@(string.IsNullOrEmpty(Model.CourseImageUrl) ? "/images/course-placeholder.jpg" : "/images/"+Model.CourseImageUrl)" 
+                             alt="@Model.CourseName" class="img-thumbnail me-3" style="width: 100px; height: 75px; object-fit: cover;">
+                        <div>
+                            <h2 class="h5 mb-1">@Model.CourseName</h2>
+                            <p class="text-muted mb-0">Instructor: @Model.InstructorName</p>
+                        </div>
+                    </div>
+
+                    <form asp-action="Rate" method="post">
+                        <input type="hidden" asp-for="CourseID" />
+                        <input type="hidden" asp-for="IsEdit" />
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Your Rating</label>
+                            <div class="rating-input">
+                                <div class="d-flex align-items-center">
+                                    <div class="star-rating">
+                                        @for (int i = 5; i >= 1; i--)
+                                        {
+                                            <input type="radio" id="star@(i)" name="Rating" value="@i" @(Model.Rating == i ? "checked" : "") />
+                                            <label for="star@(i)" title="@i stars">
+                                                <i class="bi bi-star-fill"></i>
+                                            </label>
+                                        }
+                                    </div>
+                                    <span class="ms-3 rating-text">
+                                        @switch (Model.Rating)
+                                        {
+                                            case 1:
+                                                <text>Poor</text>
+                                                break;
+                                            case 2:
+                                                <text>Fair</text>
+                                                break;
+                                            case 3:
+                                                <text>Good</text>
+                                                break;
+                                            case 4:
+                                                <text>Very Good</text>
+                                                break;
+                                            case 5:
+                                                <text>Excellent</text>
+                                                break;
+                                            default:
+                                                <text>Select a rating</text>
+                                                break;
+                                        }
+                                    </span>
+                                </div>
+                                <span asp-validation-for="Rating" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="Comment" class="form-label">Your Review</label>
+                            <textarea asp-for="Comment" class="form-control" rows="5" 
+                                      placeholder="Share your experience with this course. What did you like? What could be improved?"></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                            <div class="form-text">
+                                <span id="charCount">0</span>/500 characters
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="MyLearning" asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-purple">
+                                <i class="bi bi-check2 me-2"></i> @(Model.IsEdit ? "Update Review" : "Submit Review")
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            font-size: 1.5rem;
+            justify-content: flex-end;
+            padding: 0;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            color: #ddd;
+            cursor: pointer;
+            padding: 0 0.1em;
+            margin: 0;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: #ffb400;
+        }
+
+        .rating-text {
+            font-weight: 500;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Update character count
+            $('#Comment').on('input', function() {
+                var charCount = $(this).val().length;
+                $('#charCount').text(charCount);
+                
+                if (charCount > 500) {
+                    $('#charCount').addClass('text-danger');
+                } else {
+                    $('#charCount').removeClass('text-danger');
+                }
+            });
+            
+            // Initialize character count
+            $('#Comment').trigger('input');
+            
+            // Update rating text when star is clicked
+            $('input[name="Rating"]').change(function() {
+                var rating = $(this).val();
+                var ratingText = '';
+                
+                switch (parseInt(rating)) {
+                    case 1:
+                        ratingText = 'Poor';
+                        break;
+                    case 2:
+                        ratingText = 'Fair';
+                        break;
+                    case 3:
+                        ratingText = 'Good';
+                        break;
+                    case 4:
+                        ratingText = 'Very Good';
+                        break;
+                    case 5:
+                        ratingText = 'Excellent';
+                        break;
+                    default:
+                        ratingText = 'Select a rating';
+                }
+                
+                $('.rating-text').text(ratingText);
+            });
+        });
+    </script>
+}

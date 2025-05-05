@@ -1,0 +1,280 @@
+@model ELearningPlatform.Models.User
+@{
+    ViewData["Title"] = "Dashboard";
+    var _context = ViewBag.Context; // Add this to resolve _context not found error
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="@(string.IsNullOrEmpty(Model.ProfileImageUrl) ? "/images/profile-placeholder.jpg" : $"/images/{Model.ProfileImageUrl}")" 
+                             alt="@Model.FirstName @Model.LastName" class="rounded-circle img-thumbnail" style="width: 120px; height: 120px; object-fit: cover;">
+                    </div>
+                    <h5 class="card-title mb-1">@Model.FirstName @Model.LastName</h5>
+                    <p class="text-muted mb-3">@Model.Email</p>
+                    <a asp-controller="Account" asp-action="Profile" class="btn btn-outline-purple btn-sm">
+                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                    </a>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a asp-controller="Account" asp-action="Dashboard" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                    <a asp-controller="MyLearning" asp-action="Index" class="list-group-item list-group-item-action">
+                        <i class="bi bi-collection-play me-2"></i> My Learning
+                    </a>
+                    <a asp-controller="Account" asp-action="Certificates" class="list-group-item list-group-item-action">
+                        <i class="bi bi-award me-2"></i> Certificates
+                    </a>
+                    <a asp-controller="Reviews" asp-action="MyReviews" class="list-group-item list-group-item-action">
+                        <i class="bi bi-star me-2"></i> My Reviews
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-9">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Dashboard</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-purple text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">Courses</h6>
+                                            <h2 class="mb-0">@Model.Enrollments.Count</h2>
+                                        </div>
+                                        <i class="bi bi-collection-play fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">Completed</h6>
+                                            <h2 class="mb-0">@Model.Enrollments.Count(c => c.IsCompleted)</h2>
+                                        </div>
+                                        <i class="bi bi-check-circle fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">Certificates</h6>
+                                            <h2 class="mb-0">@Model.Certifications.Count</h2>
+                                        </div>
+                                        <i class="bi bi-award fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">My Learning Progress</h5>
+                    <a asp-controller="MyLearning" asp-action="Index" class="btn btn-sm btn-outline-purple">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Enrollments.Any())
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-collection-play display-4 text-muted mb-3"></i>
+                            <h5>No courses yet</h5>
+                            <p class="text-muted">You haven't enrolled in any courses yet.</p>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-purple">Browse Courses</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Progress</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var enrollment in Model.Enrollments.OrderByDescending(c => c.EnrollmentDate).Take(5))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="@(string.IsNullOrEmpty(enrollment.Course.ImageUrl) ? "/images/course-placeholder.jpg" : $"/images/{enrollment.Course.ImageUrl}")"
+                                                         alt="@enrollment.Course.CourseName" class="me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                                    <div>
+                                                        <h6 class="mb-0">@enrollment.Course.CourseName</h6>
+                                                        <small class="text-muted">
+                                                            @(enrollment.Course.Instructor != null ? 
+                                                                enrollment.Course.Instructor.FirstName + " " + enrollment.Course.Instructor.LastName : 
+                                                                "Unknown Instructor")
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="progress" style="height: 8px; width: 100px;">
+                                                    <div class="progress-bar bg-purple" role="progressbar" style="width: @enrollment.Progress%;" 
+                                                         aria-valuenow="@enrollment.Progress" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <small class="text-muted">@enrollment.Progress%</small>
+                                            </td>
+                                            <td>
+                                                @if (!enrollment.IsPurchased)
+                                                {
+                                                    <span class="badge bg-warning text-dark">Not Purchased</span>
+                                                }
+                                                else if (enrollment.IsCompleted)
+                                                {
+                                                    <span class="badge bg-success">Completed</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-primary">In Progress</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!enrollment.IsPurchased)
+                                                {
+                                                    <a asp-controller="MyLearning" asp-action="Purchase" asp-route-id="@enrollment.EnrollmentID" class="btn btn-sm btn-purple">
+                                                        Purchase
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-controller="Courses" asp-action="Details" asp-route-id="@enrollment.CourseID" 
+                                                       asp-route-LessonId="@(enrollment.LastLessonId > 0 ? enrollment.LastLessonId : 1)" 
+                                                       class="btn btn-sm btn-outline-purple">
+                                                        Continue
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recommended Courses</h5>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-purple">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var course in GetRecommendedCourses().Take(3))
+                        {
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <img src="@(string.IsNullOrEmpty(course.ImageUrl) ? "/images/course-placeholder.jpg" : $"{course.ImageUrl}")"
+                                         class="card-img-top" alt="@course.CourseName" style="height: 120px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">@course.CourseName</h6>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="text-warning me-1">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    if (i <= Math.Floor(course.AverageRating))
+                                                    {
+                                                        <i class="bi bi-star-fill"></i>
+                                                    }
+                                                    else if (i - course.AverageRating < 1 && i - course.AverageRating > 0)
+                                                    {
+                                                        <i class="bi bi-star-half"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-star"></i>
+                                                    }
+                                                }
+                                            </div>
+                                            <small class="text-muted">(@course.RatingCount)</small>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold">$@course.Price.ToString("0.00")</span>
+                                            <a asp-controller="MyLearning" asp-action="AddCourse" asp-route-id="@course.CourseID" class="btn btn-sm btn-purple">
+                                                Add
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private List<ELearningPlatform.Models.Course> GetRecommendedCourses()
+    {
+        // In a real application, this would be based on user preferences and behavior
+        return new List<ELearningPlatform.Models.Course>
+        {
+            new ELearningPlatform.Models.Course
+            {
+                CourseID = Guid.NewGuid(),
+                CourseName = "Mobile App Development with Flutter",
+                Description = "Create beautiful cross-platform mobile apps for iOS and Android using Flutter and Dart.",
+                Price = 54.99m,
+                ImageUrl = "/images/course-placeholder.jpg",
+                InstructorID = Guid.NewGuid(),
+                DurationInHours = 40,
+                AverageRating = 4.6,
+                RatingCount = 820,
+                IsCertified = true
+            },
+            new ELearningPlatform.Models.Course
+            {
+                CourseID = Guid.NewGuid(),
+                CourseName = "UI/UX Design Fundamentals",
+                Description = "Learn the principles of user interface and user experience design to create engaging digital products.",
+                Price = 39.99m,
+                ImageUrl = "/images/course-placeholder.jpg",
+                InstructorID = Guid.NewGuid(),
+                DurationInHours = 28,
+                AverageRating = 4.9,
+                RatingCount = 1100,
+                IsCertified = true
+            },
+            new ELearningPlatform.Models.Course
+            {
+                CourseID = Guid.NewGuid(),
+                CourseName = "DevOps Engineering with Docker and Kubernetes",
+                Description = "Master containerization and orchestration for modern application deployment and scaling.",
+                Price = 64.99m,
+                ImageUrl = "/images/course-placeholder.jpg",
+                InstructorID = Guid.NewGuid(),
+                DurationInHours = 45,
+                AverageRating = 4.7,
+                RatingCount = 650,
+                IsCertified = true
+            }
+        };
+    }
+}
+

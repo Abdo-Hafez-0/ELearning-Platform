@@ -1,0 +1,128 @@
+@model IEnumerable<ELearningPlatform.Models.Enrollment>
+
+@{
+    ViewData["Title"] = "My Students";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5 fw-bold">My Students</h1>
+            <p class="text-muted">View and manage students enrolled in your courses.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <partial name="_InstructorNavPartial" />
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0">All Students (@Model.Count())</h5>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search students..." id="studentSearch">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.Any())
+                    {
+                        <div class="p-4 text-center">
+                            <p class="mb-0">No students have enrolled in your courses yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="studentsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Course</th>
+                                        <th>Enrolled On</th>
+                                        <th>Progress</th>
+                                        <th>Completion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var enrollment in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(enrollment.User.ProfileImageUrl))
+                                                    {
+                                                        <img src="/images/@enrollment.User.ProfileImageUrl" alt="@enrollment.User.FirstName" class="me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="me-2 bg-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 50%;">
+                                                            <i class="fas fa-user text-secondary"></i>
+                                                        </div>
+                                                    }
+                                                    <div>
+                                                        <div class="fw-bold">@enrollment.User.FirstName @enrollment.User.LastName</div>
+                                                        <small class="text-muted">@enrollment.User.Email</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@enrollment.Course.CourseName</td>
+                                            <td>@enrollment.EnrollmentDate.ToString("MMM dd, yyyy")</td>
+                                            <td>
+                                                @{
+                                                    var progressPercentage = enrollment.Progress > 0 ? enrollment.Progress : 0;
+                                                }
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: @progressPercentage%;" aria-valuenow="@progressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <small class="text-muted">@progressPercentage%</small>
+                                            </td>
+                                            <td>
+                                                @if (enrollment.CompletedDate.HasValue)
+                                                {
+                                                    <span class="badge bg-success">Completed</span>
+                                                    <small class="text-muted d-block">@enrollment.CompletedDate.Value.ToString("MMM dd, yyyy")</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning text-dark">In Progress</span>
+                                                }
+                                            </td>
+                                            
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#studentSearch").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#studentsTable tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}

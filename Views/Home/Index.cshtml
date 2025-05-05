@@ -1,0 +1,162 @@
+@using ELearningPlatform.Models.ViewModel
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!-- Hero Section -->
+<div class="hero-section py-5 mb-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold">Expand Your Knowledge</h1>
+                <p class="lead">Learn new skills, advance your career, and explore your passions with our expert-led online courses.</p>
+                <a href="#featured-courses" class="btn btn-light btn-lg mt-3">Explore Courses</a>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/hero-image.jpg" alt="E-Learning Platform" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Portfolio Section -->
+<section class="portfolio-section py-5 mb-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col">
+                <h2 class="section-title">Welcome to E-Learning Platform</h2>
+                <p class="section-description">
+                    Our platform offers a wide range of high-quality courses taught by industry experts. 
+                    Whether you're looking to advance your career, learn a new skill, or explore a hobby, 
+                    we have the perfect course for you.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-wrapper mb-3">
+                        <i class="bi bi-laptop fs-1 text-primary"></i>
+                    </div>
+                    <h3>Learn Anywhere</h3>
+                    <p>Access our courses on any device, anytime, anywhere. Learn at your own pace and on your own schedule.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-wrapper mb-3">
+                        <i class="bi bi-person-check fs-1 text-primary"></i>
+                    </div>
+                    <h3>Expert Instructors</h3>
+                    <p>Learn from industry professionals with real-world experience and proven teaching methods.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-wrapper mb-3">
+                        <i class="bi bi-award fs-1 text-primary"></i>
+                    </div>
+                    <h3>Certificates</h3>
+                    <p>Earn certificates upon course completion to showcase your new skills to employers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Courses Section -->
+<section id="featured-courses" class="featured-courses-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col">
+                <h2 class="section-title">Featured Courses</h2>
+                <p class="section-description">Explore our most popular courses and start learning today</p>
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var course in Model.FeaturedCourses)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 course-card">
+                        <img src="@(string.IsNullOrEmpty(course.ImageUrl) ? "/images/course-placeholder.jpg" : $"images/{course.ImageUrl}")" 
+                             class="card-img-top" alt="@course.CourseName">
+                        <div class="card-body">
+                            <h5 class="card-title">@course.CourseName</h5>
+                            <p class="card-text instructor"><i class="bi bi-person"></i> @course.Instructor.FirstName @course.Instructor.LastName</p>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-warning me-1">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= Math.Floor(course.AverageRating))
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        else if (i - course.AverageRating < 1 && i - course.AverageRating > 0)
+                                        {
+                                            <i class="bi bi-star-half"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    }
+                                </div>
+                                <small class="text-muted">@course.AverageRating.ToString("0.0") (@course.RatingCount)</small>
+                            </div>
+                            <p class="card-text">@course.Description</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="course-price fw-bold">$@course.Price.ToString("0.00")</span>
+                                <span class="course-duration"><i class="bi bi-clock"></i> @course.DurationInHours hours</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.CourseID" class="btn btn-outline-purple">
+                                    <i class="bi bi-play-circle"></i> View Details
+                                </a>
+                                <a asp-controller="MyLearning" asp-action="AddCourse" asp-route-id="@course.CourseID" class="btn btn-purple">
+                                    <i class="bi bi-collection-play"></i> Add to My Learning
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row mt-4">
+            <div class="col text-center">
+                <a asp-controller="Courses" class="btn btn-outline-primary btn-lg">View All Courses</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- User Reviews Section -->
+<section class="user-reviews-section py-5 mb-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col">
+                <h2 class="section-title">What Our Students Say</h2>
+                <p class="section-description">Read reviews from students who have taken our courses</p>
+            </div>
+        </div>
+
+        @if (Model.FeaturedReviews != null && Model.FeaturedReviews.Any())
+        {
+            <partial name="_ReviewsPartial" model="Model.FeaturedReviews" />
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <p>No reviews yet. Be the first to review a course!</p>
+            </div>
+        }
+
+        @* <div class="row mt-4"> *@
+        @*     <div class="col text-center"> *@
+        @*         <a asp-controller="Reviews" asp-action="Index" class="btn btn-outline-primary">View All Reviews</a> *@
+        @*     </div> *@
+        @* </div> *@
+    </div>
+</section>
+

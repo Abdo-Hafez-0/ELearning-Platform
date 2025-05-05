@@ -1,0 +1,37 @@
+@model IEnumerable<ELearningPlatform.Models.Course>
+@{
+    ViewData["Title"] = "All Courses";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">All Courses</h1>
+    
+    <div class="row">
+        @foreach (var course in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 course-card">
+                    <img src="@(string.IsNullOrEmpty(course.ImageUrl) ? "/images/course-placeholder.jpg" : $"images/{course.ImageUrl}")"
+                         class="card-img-top" alt="@course.CourseName">
+                    <div class="card-body">
+                        <h5 class="card-title">@course.CourseName</h5>
+                        <p class="card-text instructor"><i class="bi bi-person"></i> @(course.Instructor != null ? course.Instructor.FirstName + " " + course.Instructor.LastName : "Unknown Instructor")</p>
+                        <p class="card-text">@course.Description</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="course-price fw-bold">$@course.Price.ToString("0.00")</span>
+                            <span class="course-duration"><i class="bi bi-clock"></i> @course.DurationInHours hours</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <div class="d-grid">
+                            <a asp-action="Details" asp-route-id="@course.CourseID" class="btn btn-purple">
+                                View Course
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

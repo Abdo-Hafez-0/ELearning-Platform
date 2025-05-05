@@ -1,0 +1,52 @@
+@model IEnumerable<ELearningPlatform.Models.Certification>
+@{
+    ViewData["Title"] = "My Certificates";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">My Certificates</h1>
+    
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-award display-1 text-muted mb-3"></i>
+                <h3>No certificates yet</h3>
+                <p class="text-muted mb-4">Complete courses to earn certificates.</p>
+                <a asp-controller="MyLearning" asp-action="Index" class="btn btn-purple">Go to My Learning</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var certificate in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-purple text-white">
+                            <h5 class="mb-0">Certificate of Completion</h5>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@certificate.Course.CourseName</h5>
+                            <p class="card-text text-muted mb-3">
+                                <small>Issued on @certificate.CertificationDate.ToString("MMMM d, yyyy")</small>
+                            </p>
+                            <p class="card-text">
+                                <span class="badge bg-light text-dark">Certificate No: @certificate.CertificateNumber</span>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <div class="d-grid">
+                                <a asp-action="View" asp-route-id="@certificate.CertificationID" class="btn btn-outline-purple">
+                                    <i class="bi bi-eye me-2"></i> View Certificate
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+

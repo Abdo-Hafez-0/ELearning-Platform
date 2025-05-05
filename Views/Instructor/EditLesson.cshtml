@@ -1,0 +1,248 @@
+@model ELearningPlatform.Models.LessonViewModel
+
+@{
+    ViewData["Title"] = "Edit Lesson and Quiz";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="ManageCourse" asp-route-id="@ViewBag.CourseID">@ViewBag.CourseName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Lesson</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h1 class="h3 mb-0">Edit Lesson</h1>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteLessonModal">
+                        <i class="fas fa-trash me-2"></i> Delete Lesson
+                    </button>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditLesson" asp-route-id="@Model.Id" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Lesson Details Section -->
+                        <div class="mb-4">
+                            <h4 class="mb-3">Lesson Details</h4>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label asp-for="Title" class="form-label">Lesson Title</label>
+                                        <input asp-for="Title" class="form-control" />
+                                        <span asp-validation-for="Title" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Description" class="form-label">Description</label>
+                                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                                        <span asp-validation-for="Description" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label asp-for="VideoUrl" class="form-label">Video URL</label>
+                                            <input asp-for="VideoUrl" class="form-control" placeholder="https://..." />
+                                            <span asp-validation-for="VideoUrl" class="text-danger"></span>
+                                            <small class="form-text text-muted">Enter YouTube, Vimeo, or other video platform URL</small>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label asp-for="DurationInMinutes" class="form-label">Duration (minutes)</label>
+                                            <input asp-for="DurationInMinutes" class="form-control" type="number" min="1" max="300" />
+                                            <span asp-validation-for="DurationInMinutes" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label asp-for="Order" class="form-label">Order</label>
+                                            <input asp-for="Order" class="form-control" type="number" min="1" />
+                                            <span asp-validation-for="Order" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Section -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="mb-0">Quiz</h4>
+                                <div class="form-check form-switch">
+                                    <input asp-for="HasQuiz" class="form-check-input" id="hasQuiz" />
+                                    <label class="form-check-label" for="hasQuiz">
+                                        Include quiz for this lesson
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="quizSection" class="card bg-light">
+                                <div class="card-body">
+                                    <input type="hidden" asp-for="Quiz.Id" />
+
+                                    <div class="mb-3">
+                                        <label asp-for="Quiz.Title" class="form-label">Quiz Title</label>
+                                        <input asp-for="Quiz.Title" class="form-control" />
+                                        <span asp-validation-for="Quiz.Title" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Quiz.Question" class="form-label">Question</label>
+                                        <textarea asp-for="Quiz.Question" class="form-control" rows="2"></textarea>
+                                        <span asp-validation-for="Quiz.Question" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label d-flex justify-content-between">
+                                            <span>Answer Options</span>
+                                            <span class="text-muted small">Select the correct answer</span>
+                                        </label>
+
+                                        <div class="options-container">
+                                            @for (int i = 0; i < Model.Quiz.Options.Count; i++)
+                                            {
+                                                <div class="input-group mb-2">
+                                                    <div class="input-group-text">
+                                                        <input type="radio" name="Quiz.CorrectOptionIndex" value="@i" 
+                                                               @(i == Model.Quiz.CorrectOptionIndex ? "checked" : "") class="form-check-input mt-0" required />
+                                                    </div>
+                                                    <input type="hidden" asp-for="Quiz.Options[i].Id" />
+                                                    <input asp-for="Quiz.Options[i].OptionText" class="form-control" placeholder="Option @(i + 1)" required />
+                                                    @if (i > 1) // Allow removing options beyond the minimum 2
+                                                    {
+                                                        <button type="button" class="btn btn-outline-danger remove-option">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <button type="button" id="addOption" class="btn btn-outline-secondary mt-2">
+                                            <i class="fas fa-plus me-2"></i> Add Option
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="ManageCourse" asp-route-id="@ViewBag.CourseID" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Back to Course
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Lesson Modal -->
+<div class="modal fade" id="deleteLessonModal" tabindex="-1" aria-labelledby="deleteLessonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteLessonModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this lesson "<strong>@Model.Title</strong>"?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i> This action cannot be undone. All associated quizzes will also be deleted.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="DeleteLesson" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Delete Lesson</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hasQuizCheckbox = document.getElementById('hasQuiz');
+            const quizSection = document.getElementById('quizSection');
+            const addOptionBtn = document.getElementById('addOption');
+            const optionsContainer = document.querySelector('.options-container');
+            
+            // Toggle quiz section visibility
+            function toggleQuizSection() {
+                if (hasQuizCheckbox.checked) {
+                    quizSection.style.display = 'block';
+                } else {
+                    quizSection.style.display = 'none';
+                }
+            }
+            
+            // Initial state
+            toggleQuizSection();
+            
+            // Event listener for quiz toggle
+            hasQuizCheckbox.addEventListener('change', toggleQuizSection);
+            
+            // Add new option
+            addOptionBtn.addEventListener('click', function() {
+                const optionCount = optionsContainer.children.length;
+                const newOption = document.createElement('div');
+                newOption.className = 'input-group mb-2';
+                newOption.innerHTML = `
+                    <div class="input-group-text">
+                        <input type="radio" name="Quiz.CorrectOptionIndex" value="${optionCount}" class="form-check-input mt-0" required />
+                    </div>
+                    <input type="hidden" name="Quiz.Options[${optionCount}].Id" value="" />
+                    <input name="Quiz.Options[${optionCount}].OptionText" class="form-control" placeholder="Option ${optionCount + 1}" required />
+                    <button type="button" class="btn btn-outline-danger remove-option">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                optionsContainer.appendChild(newOption);
+                
+                // Add event listener to the new remove button
+                newOption.querySelector('.remove-option').addEventListener('click', function() {
+                    removeOption(this);
+                });
+            });
+            
+            // Remove option
+            function removeOption(button) {
+                const optionElement = button.closest('.input-group');
+                optionElement.remove();
+                
+                // Renumber the remaining options
+                const options = optionsContainer.querySelectorAll('.input-group');
+                options.forEach((option, index) => {
+                    const radio = option.querySelector('input[type="radio"]');
+                    radio.value = index;
+                    
+                    const hiddenInput = option.querySelector('input[type="hidden"]');
+                    hiddenInput.name = `Quiz.Options[${index}].Id`;
+                    
+                    const textInput = option.querySelector('input[type="text"], input.form-control');
+                    textInput.name = `Quiz.Options[${index}].OptionText`;
+                    textInput.placeholder = `Option ${index + 1}`;
+                });
+            }
+            
+            // Add event listeners to existing remove buttons
+            document.querySelectorAll('.remove-option').forEach(button => {
+                button.addEventListener('click', function() {
+                    removeOption(this);
+                });
+            });
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

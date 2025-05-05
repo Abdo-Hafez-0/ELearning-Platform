@@ -1,0 +1,171 @@
+@model IEnumerable<ELearningPlatform.Models.Course>
+
+@{
+	ViewData["Title"] = "My Courses";
+	Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+	<div class="row mb-4">
+		<div class="col-md-8">
+			<h1 class="display-5 fw-bold">My Courses</h1>
+			<p class="text-muted">Manage your course catalog and content.</p>
+		</div>
+
+	</div>
+
+	<div class="row">
+		<!-- Left Sidebar -->
+		<div class="col-lg-3 mb-4">
+			<partial name="_InstructorNavPartial" />
+		</div>
+
+		<!-- Main Content -->
+		<div class="col-lg-9">
+			@if (!Model.Any())
+			{
+				<div class="card shadow-sm">
+					<div class="card-body p-5 text-center">
+						<div class="mb-4">
+							<i class="fas fa-book-open fa-4x text-muted"></i>
+						</div>
+						<h3>No courses yet</h3>
+						<p class="text-muted mb-4">You haven't created any courses yet. Start creating your first course to share your knowledge with students.</p>
+						<a asp-controller="Courses" asp-action="Create" class="btn btn-primary">
+							<i class="fas fa-plus me-2"></i> Create Your First Course
+						</a>
+					</div>
+				</div>
+			}
+			else
+			{
+				<div class="card shadow-sm">
+					<div class="card-header bg-white">
+						<div class="row align-items-center">
+							<div class="col">
+								<h5 class="mb-0">All Courses (@Model.Count())</h5>
+							</div>
+							<div class="col-auto">
+								<div class="input-group">
+									<input type="text" class="form-control" placeholder="Search courses..." id="courseSearch">
+									<button class="btn btn-outline-secondary" type="button">
+										<i class="fas fa-search"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-body p-0">
+						<div class="table-responsive">
+							<table class="table table-hover mb-0" id="coursesTable">
+								<thead class="table-light">
+									<tr>
+										<th>Course Name</th>
+										<th>Level</th>
+										<th>Duration</th>
+										<th>Students</th>
+										<th>Rating</th>
+										<th>Status</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var course in Model)
+									{
+										<tr>
+											<td>
+												<div class="d-flex align-items-center">
+													@if (!string.IsNullOrEmpty(course.ImageUrl))
+													{
+														<img src="/images/@course.ImageUrl" alt="@course.CourseName" class="me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+													}
+													else
+													{
+														<div class="me-2 bg-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 4px;">
+															<i class="fas fa-book text-secondary"></i>
+														</div>
+													}
+													<div>
+														<div class="fw-bold">@course.CourseName</div>
+														<small class="text-muted">@course.Language</small>
+													</div>
+												</div>
+											</td>
+											<td><span class="badge bg-primary">@course.Level</span></td>
+											<td>@course.DurationInHours hrs</td>
+											<td>@(ViewBag.CourseStudents != null && ViewBag.CourseStudents.ContainsKey(course.CourseID) ? ViewBag.CourseStudents[course.CourseID] : 0)</td>
+											<td>
+												<div class="d-flex align-items-center">
+													<span class="me-1">@(course.AverageRating > 0 ? course.AverageRating.ToString("0.0") : "-")</span>
+													@if (course.AverageRating > 0)
+													{
+														<i class="fas fa-star text-warning"></i>
+													}
+												</div>
+											</td>
+											<td>
+												<span class="badge bg-success">Published</span>
+											</td>
+											<td>
+												<div class="btn-group">
+													<a asp-action="ManageCourse" asp-route-id="@course.CourseID" class="btn btn-sm btn-outline-primary">
+														<i class="fas fa-edit"></i> Manage
+													</a>
+													<button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+														<span class="visually-hidden">Toggle Dropdown</span>
+													</button>
+													<ul class="dropdown-menu">
+														<li>
+															<a class="dropdown-item" asp-controller="Courses" asp-action="Details" asp-route-id="@course.CourseID">
+																<i class="fas fa-eye me-2"></i> Preview
+															</a>
+														</li>
+													</ul>
+												</div>
+
+												<!-- Delete Course Modal -->
+												<div class="modal fade" id="deleteCourseModal-@course.CourseID" tabindex="-1" aria-labelledby="deleteCourseModalLabel-@course.CourseID" aria-hidden="true">
+													<div class="modal-dialog">
+														<div class="modal-content">
+															<div class="modal-header">
+																<h5 class="modal-title" id="deleteCourseModalLabel-@course.CourseID">Delete Course</h5>
+																<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+															</div>
+															<div class="modal-body">
+																<p>Are you sure you want to delete the course "<strong>@course.CourseName</strong>"?</p>
+																<p class="text-danger">This action cannot be undone. All lessons, quizzes, and student progress will be permanently deleted.</p>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+																<form asp-controller="Courses" asp-action="Delete" asp-route-id="@course.CourseID" method="post">
+																	<button type="submit" class="btn btn-danger">Delete Course</button>
+																</form>
+															</div>
+														</div>
+													</div>
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		$(document).ready(function() {
+			$("#courseSearch").on("keyup", function() {
+				var value = $(this).val().toLowerCase();
+				$("#coursesTable tbody tr").filter(function() {
+					$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+				});
+			});
+		});
+	</script>
+}

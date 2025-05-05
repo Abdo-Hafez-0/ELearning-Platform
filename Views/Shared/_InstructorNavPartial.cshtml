@@ -1,0 +1,19 @@
+<div class="card mb-4">
+    <div class="list-group list-group-flush">
+        <a asp-controller="Instructor" asp-action="Dashboard" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active text-white" : "")">
+            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+        </a>
+        <a asp-controller="Instructor" asp-action="Courses" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "Courses" ? "active text-white" : "")">
+            <i class="fas fa-book me-2"></i> My Courses
+        </a>
+        <a asp-controller="Instructor" asp-action="Students" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "Students" ? "active text-white" : "")">
+            <i class="fas fa-users me-2"></i> My Students
+        </a>
+        <a asp-controller="Instructor" asp-action="Analytics" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "Analytics" ? "active text-white" : "")">
+            <i class="fas fa-chart-line me-2"></i> Analytics
+        </a>
+        <a asp-controller="Instructor" asp-action="Reviews" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "Reviews" ? "active text-white" : "")">
+            <i class="fas fa-comment me-2"></i> Reviews
+        </a>
+    </div>
+</div>

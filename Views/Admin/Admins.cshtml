@@ -1,0 +1,66 @@
+@model IEnumerable<ELearningPlatform.Models.Admin>
+@{
+    ViewData["Title"] = "Manage Admins";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Manage Admins</h1>
+        <a asp-action="CreateAdmin" class="btn btn-purple">
+            <i class="bi bi-plus-circle me-2"></i> Add New Admin
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="adminsTable">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Created</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var admin in Model)
+                        {
+                            <tr>
+                                <td>@admin.Username</td>
+                                <td>@admin.Email</td>
+                                <td>@admin.PhoneNumber</td>
+                                <td>@admin.CreatedAt.ToString("MMM d, yyyy")</td>
+                                <td>@(admin.LastLogin.HasValue ? admin.LastLogin.Value.ToString("MMM d, yyyy HH:mm") : "Never")</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="EditAdmin" asp-route-id="@admin.Id" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="DeleteAdmin" asp-route-id="@admin.Id" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#adminsTable').DataTable({
+                "order": [[0, "asc"]],
+                "pageLength": 10
+            });
+        });
+    </script>
+}

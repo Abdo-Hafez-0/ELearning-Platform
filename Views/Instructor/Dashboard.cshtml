@@ -1,0 +1,187 @@
+@model IEnumerable<ELearningPlatform.Models.Course>
+
+@{
+    ViewData["Title"] = "Instructor Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold">Instructor Dashboard</h1>
+            <p class="text-muted">Manage your courses, track student progress, and create engaging content.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="list-group shadow-sm">
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                </a>
+                <a asp-action="Courses" class="list-group-item list-group-item-action">
+                    <i class="fas fa-book me-2"></i> My Courses
+                </a>
+                <a asp-action="Students" class="list-group-item list-group-item-action">
+                    <i class="fas fa-users me-2"></i> My Students
+                </a>
+                <a asp-action="Analytics" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-line me-2"></i> Analytics
+                </a>
+                <a asp-action="Reviews" class="list-group-item list-group-item-action">
+                    <i class="fas fa-comment me-2"></i> Reviews
+                </a>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Quick Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total Courses</span>
+                        <span class="fw-bold">@Model.Count()</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total Students</span>
+                        <span class="fw-bold">@ViewBag.TotalStudents</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total Lessons</span>
+                        <span class="fw-bold">@ViewBag.TotalLessons</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Average Rating</span>
+                        <span class="fw-bold">@ViewBag.AverageRating</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Recent Courses -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">My Courses</h5>
+                    <a asp-action="Courses" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.Any())
+                    {
+                        <div class="p-4 text-center">
+                            <p class="mb-3">You haven't created any courses yet.</p>
+                            <a asp-controller="Courses" asp-action="Create" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i> Create Your First Course
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Course Name</th>
+                                        <th>Level</th>
+                                        <th>Duration</th>
+                                        <th>Students</th>
+                                        <th>Rating</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var course in Model.Take(5))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(course.ImageUrl))
+                                                    {
+                                                        <img src="/images/@course.ImageUrl" alt="@course.CourseName" class="me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="me-2 bg-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 4px;">
+                                                            <i class="fas fa-book text-secondary"></i>
+                                                        </div>
+                                                    }
+                                                    <div>
+                                                        <div class="fw-bold">@course.CourseName</div>
+                                                        <small class="text-muted">@course.Language</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-primary">@course.Level</span></td>
+                                            <td>@course.DurationInHours hrs</td>
+                                            <td>@(ViewBag.CourseStudents != null && ViewBag.CourseStudents.ContainsKey(course.CourseID) ? ViewBag.CourseStudents[course.CourseID] : 0)</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="me-1">@(course.AverageRating > 0 ? course.AverageRating.ToString("0.0") : "-")</span>
+                                                    @if (course.RatingCount > 0)
+                                                    {
+                                                        <i class="fas fa-star text-warning"></i>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a asp-action="ManageCourse" asp-route-id="@course.CourseID" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-edit"></i> Manage
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item" asp-controller="Courses" asp-action="Details" asp-route-id="@course.CourseID">
+                                                                <i class="fas fa-eye me-2"></i> Preview
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">New student enrolled in <a href="#">Introduction to Programming</a></h6>
+                                <small class="text-muted">3 days ago</small>
+                            </div>
+                            <p class="mb-1">John Doe has enrolled in your course.</p>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">New review on <a href="#">Web Development Bootcamp</a></h6>
+                                <small class="text-muted">1 week ago</small>
+                            </div>
+                            <p class="mb-1">Sarah Smith left a 5-star review on your course.</p>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Course completion</h6>
+                                <small class="text-muted">2 weeks ago</small>
+                            </div>
+                            <p class="mb-1">5 students completed <a href="#">Data Science Fundamentals</a> this week.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
