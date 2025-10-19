@@ -32,7 +32,7 @@ This is a web-based eLearning platform built using ASP.NET MVC. It allows users 
 
 1. **Clone the repository**
    bash
-   git clone https://github.com/abdohafez454/ELearning-Platform.git
+   git clone [https://github.com/Abdo-Hafez-0/ELearning-Platform.git]
 
 
 2. **Open the project**
